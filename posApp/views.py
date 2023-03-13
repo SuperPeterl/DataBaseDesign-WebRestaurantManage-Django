@@ -11,7 +11,7 @@ from django.shortcuts import redirect
 import json, sys
 from datetime import date, datetime
 
-# Login
+# Login123132132
 def login_user(request):
     logout(request)
     resp = {"status":'failed','msg':''}
