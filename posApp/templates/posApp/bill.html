@@ -25,6 +25,9 @@
                 <thead>
                     <tr>
                         <th class="text-center py-1">#</th>
+                        <th class="text-center py-1">billid</th>
+                        <th class="text-center py-1">billdate</th>
+                        <th class="text-center py-1">make</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,9 +38,12 @@
                         <td class="px-2 py-1 text-start">{{ bill.text }}</td>
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ bill.pk }}" title="Edit">
-                                <i class="material-icons mdc-button__icon">edit</i>
-                            </button>
+                            <form method="post" action="{% url 'manage_bill' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ bill.sale_id.pk }}">
+                                <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="submit"  title="Edit">
+                                    <i class="material-icons mdc-button__icon">edit</i>
+                            </form>
                             <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="button" data-id="{{ bill.pk }}" title="Delete">
                                 <i class="material-icons mdc-button__icon">deleteoutline</i>
                             </button>
@@ -59,11 +65,12 @@
             .then(data => {
             // do something with the data
             console.log(data);
+            location.reload();
         })
         .catch(error => console.error(error));
         })
         $('.edit-data').click(function() {
-            uni_modal("Edit Product", "{% url 'manage_products-page' %}?id=" + $(this).attr('data-id'))
+            fetch("{% url 'manage_bill' %}?id=" + $(this).attr('data-id'))
         })
         $('.delete-data').click(function() {
             _conf("Are you sure to delete this bill?", "delete_bill", [$(this).attr('data-id')])
@@ -79,7 +86,6 @@
     })
 
     function delete_bill($id) {
-        start_loader();
         $.ajax({
             headers: {
                 "X-CSRFToken": '{{csrf_token}}'
@@ -92,18 +98,15 @@
             dataType: "json",
             error: err => {
                 console.log(err)
-                alert_toast("An error occured.", 'error');
-                end_loader();
             },
             success: function(resp) {
                 if (typeof resp == 'object' && resp.status == 'success') {
                     location.reload();
                 } else {
-                    alert_toast("An error occured.", 'error');
-                    end_loader();
                 }
             }
         })
     }
+    
 </script>
 {% endblock ScriptBlock %}

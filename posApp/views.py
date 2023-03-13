@@ -343,7 +343,13 @@ def delete_bill(request):
     try:
         billhold.objects.filter(id = data['id']).delete()
         resp['status'] = 'success'
-        messages.success(request, 'Product Successfully deleted.')
+        messages.success(request, 'Bill Successfully deleted.')
     except:
         resp['status'] = 'failed'
     return HttpResponse(json.dumps(resp), content_type="application/json")
+
+@login_required
+def manage_bill(request):
+    id = request.POST.get('id')
+
+    return render(request,'posApp/manage_bill.html',context={})
