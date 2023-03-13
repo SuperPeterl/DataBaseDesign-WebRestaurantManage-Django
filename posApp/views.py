@@ -2,7 +2,7 @@ from pickle import FALSE
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
-from posApp.models import Category, Products, Sales, salesItems , Employees
+from posApp.models import Category, Products, Sales, salesItems , Employees ,billhold
 from django.db.models import Count, Sum
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -11,7 +11,7 @@ from django.shortcuts import redirect
 import json, sys
 from datetime import date, datetime
 
-# Login123132132
+# Login
 def login_user(request):
     logout(request)
     resp = {"status":'failed','msg':''}
@@ -315,3 +315,19 @@ def delete_sale(request):
 @login_required
 def employees(request):
     return HttpResponse('')
+
+
+@login_required
+def createbill(request):
+    billlist = billhold(text = '23')
+    billlist.save()
+    #blist = billhold.objects.all()
+    return HttpResponse()
+
+@login_required
+def bill(request):
+    b = billhold.objects.all()
+    context = {
+        'bills':b
+    }
+    return render(request, 'posApp/bill.html',context= context)

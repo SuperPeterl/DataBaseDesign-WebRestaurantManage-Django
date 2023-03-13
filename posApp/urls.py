@@ -30,4 +30,6 @@ urlpatterns = [
     #path('save_employee', views.save_employee, name="save-employee-page"),
     #path('delete_employee', views.delete_employee, name="delete-employee"),
     #path('view_employee', views.view_employee, name="view-employee-page"),
+    path('save',views.createbill,name= 'save'),
+    path('bill',views.bill,name = 'bill')
 ]
