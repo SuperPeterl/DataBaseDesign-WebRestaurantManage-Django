@@ -316,17 +316,6 @@ def delete_sale(request):
 def employees(request):
     return HttpResponse('')
 
-
-@login_required
-def createbill(request):
-    sa = Sales.objects.create()
-    sa.save()
-    billlist = billhold()   
-    billlist.sale_id = sa
-    billlist.save() 
-    #blist = billhold.objects.all()
-    return HttpResponse()
-
 @login_required
 def bill(request):
     b = billhold.objects.all()
@@ -334,3 +323,27 @@ def bill(request):
         'bills':b
     }
     return render(request, 'posApp/bill.html',context= context)
+
+@login_required
+def createbill(request):
+    resp = {'status':'failed', 'msg':''}
+    sa = Sales.objects.create()
+    sa.save()
+    billlist = billhold()   
+    billlist.sale_id = sa
+    billlist.save() 
+    #blist = billhold.objects.all()
+    resp['status'] = 'success'
+    return HttpResponse(json.dumps(resp), content_type='application/json')
+
+@login_required
+def delete_bill(request):
+    data =  request.POST
+    resp = {'status':''}
+    try:
+        billhold.objects.filter(id = data['id']).delete()
+        resp['status'] = 'success'
+        messages.success(request, 'Product Successfully deleted.')
+    except:
+        resp['status'] = 'failed'
+    return HttpResponse(json.dumps(resp), content_type="application/json")

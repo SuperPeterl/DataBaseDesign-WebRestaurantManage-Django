@@ -4,7 +4,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">bill</h4>
             <div class="text-start">
-                <button class="btn btn-primary bg-gradient btn-sm rounded-0" id="create_new"><i class="mdi mdi-plus"></i><span> Add New</span></button>
+
+                    <button class="btn btn-primary bg-gradient btn-sm rounded-0" id="create_new"><i class="mdi mdi-plus"></i><span> Add New</span></button>
             </div>
         </div>
     </div>
@@ -30,16 +31,14 @@
                     {% for bill in bills %}
                     <tr>
                         <td class="px-2 py-1 text-center">{{ bill.id }}</td>
+                        <td class="px-2 py-1 text-start">{{ bill.sale_id.id }}</td>
                         <td class="px-2 py-1 text-start">{{ bill.text }}</td>
-                            {% if product.status == 1 %}
-                            <span class="badge bg-primary rounded-pill px-3">Active</span> {% else %}
-                            <span class="badge bg-secondary rounded-pill px-3">Inactive</span> {% endif %}
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ product.pk }}" title="Edit">
+                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ bill.pk }}" title="Edit">
                                 <i class="material-icons mdc-button__icon">edit</i>
                             </button>
-                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="button" data-id="{{ product.pk }}" title="Delete">
+                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="button" data-id="{{ bill.pk }}" title="Delete">
                                 <i class="material-icons mdc-button__icon">deleteoutline</i>
                             </button>
                         </td>
@@ -54,13 +53,20 @@
 <script>
     $(function() {
         $('#create_new').click(function() {
-            uni_modal("Add New Product", "{% url 'manage_products-page' %}")
+            //uni_modal("Add New Product", "{% url 'createbill' %}")
+            fetch("{% url 'createbill' %}")
+            .then(response => response.json())
+            .then(data => {
+            // do something with the data
+            console.log(data);
+        })
+        .catch(error => console.error(error));
         })
         $('.edit-data').click(function() {
             uni_modal("Edit Product", "{% url 'manage_products-page' %}?id=" + $(this).attr('data-id'))
         })
         $('.delete-data').click(function() {
-            _conf("Are you sure to delete this Product?", "delete_product", [$(this).attr('data-id')])
+            _conf("Are you sure to delete this bill?", "delete_bill", [$(this).attr('data-id')])
         })
 
         $('#uni_modal').on('shown.bs.modal', function(a) {
@@ -72,13 +78,13 @@
         })
     })
 
-    function delete_product($id) {
+    function delete_bill($id) {
         start_loader();
         $.ajax({
             headers: {
                 "X-CSRFToken": '{{csrf_token}}'
             },
-            url: "{% url 'delete-product' %}",
+            url: "{% url 'delete_bill' %}",
             method: "POST",
             data: {
                 id: $id
