@@ -68,3 +68,6 @@ class salesItems(models.Model):
     price = models.FloatField(default=0)
     qty = models.FloatField(default=0)
     total = models.FloatField(default=0)
+
+class billhold(models.Model):
+    salesItems_id = models.ForeignKey(salesItems,on_delete=models.CASCADE)
