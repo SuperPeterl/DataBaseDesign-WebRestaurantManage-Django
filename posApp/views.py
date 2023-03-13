@@ -319,8 +319,11 @@ def employees(request):
 
 @login_required
 def createbill(request):
-    billlist = billhold(text = '23')
-    billlist.save()
+    sa = Sales.objects.create()
+    sa.save()
+    billlist = billhold()   
+    billlist.sale_id = sa
+    billlist.save() 
     #blist = billhold.objects.all()
     return HttpResponse()
 

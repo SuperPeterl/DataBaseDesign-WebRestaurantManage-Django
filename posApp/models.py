@@ -70,7 +70,8 @@ class salesItems(models.Model):
     total = models.FloatField(default=0)
 
 class billhold(models.Model):
-    #salesItems_id = models.ForeignKey(salesItems,on_delete=models.CASCADE)
-    text = models.CharField(max_length=10,default= 'nothing')
+    #salesItems_id = models.ForeignKey(salesItems,on_delete=models.CASCADE,on_delete=models.CASCADE)
+    text = models.DateTimeField(default=timezone.now) 
+    sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
     def __str__(self) -> str:
         return self.text
