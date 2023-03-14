@@ -66,15 +66,14 @@
                                         <td class="px-2 py-1 text-start">{{ order.price }}</td>
                                         <td class="px-2 py-1 text-start">{{ order.total }}</td>
                                         <td class="px-2 py-1 text-center">
-                                            <form method="post" action="{% url 'manage_bill' %}">
+                                            <form method="post" action="{% url 'manage_bill_deleteProduct' %}">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="id" value="{{ bill.sale_id.pk }}">
-                                                <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="submit"  title="Edit">
-                                                    <i class="material-icons mdc-button__icon">edit</i>
+                                                <input type="hidden" name="id" value="{{bill_id}}">
+                                                <input type="hidden" name="item_id" value="{{order.id}}">
+                                                <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="submit" title="Delete">
+                                                    <i class="material-icons mdc-button__icon">deleteoutline</i>
+                                                </button>
                                             </form>
-                                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="button" data-id="{{ bill.pk }}" title="Delete">
-                                                <i class="material-icons mdc-button__icon">deleteoutline</i>
-                                            </button>
                                         </td>
                                     </tr>
                                 {% endfor %}

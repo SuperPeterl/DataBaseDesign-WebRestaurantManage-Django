@@ -2,7 +2,7 @@ from pickle import FALSE
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
-from posApp.models import Category, Products, Sales, salesItems , Employees ,billhold
+from posApp.models import Category, Products, Sales, salesItems , Employees ,Bills
 from django.db.models import Count, Sum
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -318,7 +318,8 @@ def employees(request):
 
 @login_required
 def bill(request):
-    b = billhold.objects.all()
+    b = Bills.objects.all()
+    [x.save() for x in b]
     context = {
         'bills':b
     }
@@ -327,12 +328,11 @@ def bill(request):
 @login_required
 def createbill(request):
     resp = {'status':'failed', 'msg':''}
-    sa = Sales.objects.create()
-    sa.save()
-    billlist = billhold()   
-    billlist.sale_id = sa
-    billlist.save() 
-    #blist = billhold.objects.all()
+    sale = Sales.objects.create()
+    sale.save()
+    bill = Bills()   
+    bill.sale_id = sale
+    bill.save() 
     resp['status'] = 'success'
     return HttpResponse(json.dumps(resp), content_type='application/json')
 
@@ -340,12 +340,16 @@ def createbill(request):
 def delete_bill(request):
     data =  request.POST
     resp = {'status':''}
+    bill = Bills.objects.get(id = data['id'])
+    sale = bill.sale_id
     try:
-        billhold.objects.filter(id = data['id']).delete()
+        sale.delete()
         resp['status'] = 'success'
         messages.success(request, 'Bill Successfully deleted.')
-    except:
+    except Exception as e: 
+        print(e)
         resp['status'] = 'failed'
+        print(resp)
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 @login_required
@@ -362,16 +366,22 @@ def manage_bill(request):
 @login_required
 def manage_bill_addProduct(request):
     id = request.POST.get('id')
-    qty = request.POST.get('product_qty')
-    sale = Sales.objects.get(id = billhold.objects.get(id = id).sale_id.id)
-    product = Products.objects.get(id= request.POST.get('product_id'))
-    price = product.price
-    total = price*int(qty)
-    #print(prod,prodQty)
     context = {
-        'bill_id':id,
-        'orders':salesItems.objects.filter(sale_id = id),
-        'products':Products.objects.filter(status = 1)
-    }
-    salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
+            'bill_id':id,
+            'orders':salesItems.objects.filter(sale_id = id),
+            'products':Products.objects.filter(status = 1)
+        }
+    if request.POST.get('product_id') != None:
+        qty = request.POST.get('product_qty')
+        sale = Sales.objects.get(id = Bills.objects.get(id = id).sale_id.id)
+        product = Products.objects.get(id= request.POST.get('product_id'))
+        price = product.price
+        total = price*int(qty)
+        salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
+        return render(request,'posApp/manage_bill.html',context)
+    return render(request,'posApp/manage_bill.html',context)
+
+@login_required
+def manage_bill_deleteProduct(request):
+    
     return render(request,'posApp/manage_bill.html',context)

@@ -69,9 +69,16 @@ class salesItems(models.Model):
     qty = models.FloatField(default=0)
     total = models.FloatField(default=0)
 
-class billhold(models.Model):
+class Bills(models.Model):
     #salesItems_id = models.ForeignKey(salesItems,on_delete=models.CASCADE,on_delete=models.CASCADE)
     text = models.DateTimeField(default=timezone.now) 
     sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
     def __str__(self) -> str:
         return self.text
+    
+class billItems(models.Model):
+    sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
+    product_id = models.ForeignKey(Products,on_delete=models.CASCADE)
+    price = models.FloatField(default=0)
+    qty = models.FloatField(default=0)
+    total = models.FloatField(default=0)
