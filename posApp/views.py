@@ -383,5 +383,31 @@ def manage_bill_addProduct(request):
 
 @login_required
 def manage_bill_deleteProduct(request):
-    
+    id = request.POST.get('id')
+    item_id = request.POST.get('item_id')
+    salesItems.objects.get(id = item_id).delete()
+    context = {
+            'bill_id':id,
+            'orders':salesItems.objects.filter(sale_id = id),
+            'products':Products.objects.filter(status = 1)
+        }
     return render(request,'posApp/manage_bill.html',context)
+
+
+@login_required
+def manage_bill_checkout(request):
+    id = request.GET.get('id')
+    bill = Bills.objects.get(id = id)
+    sales = Sales.objects.get(id = bill.sale_id.id)
+    transaction = {}
+    for field in Sales._meta.get_fields():
+        if field.related_model is None:
+            transaction[field.name] = getattr(sales,field.name)
+    if 'tax_amount' in transaction:
+        transaction['tax_amount'] = format(float(transaction['tax_amount']))
+    ItemList = salesItems.objects.filter(sale_id = sales).all()
+    context = {
+        "transaction" : transaction,
+        "salesItems" : ItemList
+    }
+    return render(request, 'posApp/receipt.html',context)

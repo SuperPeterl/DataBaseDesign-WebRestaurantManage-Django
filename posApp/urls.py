@@ -35,5 +35,6 @@ urlpatterns = [
     path('delete_bill', views.delete_bill, name="delete_bill"),
     path('manage_bill',views.manage_bill,name= 'manage_bill'),
     path('manage_bill_addProduct',views.manage_bill_addProduct,name= 'manage_bill_addProduct'),
-    path('manage_bill_deleteProduct',views.manage_bill_deleteProduct,name= 'manage_bill_deleteProduct')
+    path('manage_bill_deleteProduct',views.manage_bill_deleteProduct,name= 'manage_bill_deleteProduct'),
+    path('manage_bill_checkout',views.manage_bill_checkout,name= 'manage_bill_checkout'),
 ]
