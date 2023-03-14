@@ -74,7 +74,7 @@ class Bills(models.Model):
     text = models.DateTimeField(default=timezone.now) 
     sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
     def __str__(self) -> str:
-        return self.text
+        return self.id 
     
 class billItems(models.Model):
     sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)

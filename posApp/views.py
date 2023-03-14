@@ -396,7 +396,8 @@ def manage_bill_deleteProduct(request):
 
 @login_required
 def manage_bill_checkout(request):
-    id = request.GET.get('id')
+    id = request.POST.get('id')
+    print(id,'-----------------------------')
     bill = Bills.objects.get(id = id)
     sales = Sales.objects.get(id = bill.sale_id.id)
     transaction = {}
@@ -410,4 +411,5 @@ def manage_bill_checkout(request):
         "transaction" : transaction,
         "salesItems" : ItemList
     }
-    return render(request, 'posApp/receipt.html',context)
+    print(context)
+    return render(request, 'posApp/precheckout.html',context)
