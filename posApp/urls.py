@@ -33,5 +33,6 @@ urlpatterns = [
     path('bill',views.bill,name = 'bill'),
     path('createbill',views.createbill,name= 'createbill'),
     path('delete_bill', views.delete_bill, name="delete_bill"),
-    path('manage_bill',views.manage_bill,name= 'manage_bill')
+    path('manage_bill',views.manage_bill,name= 'manage_bill'),
+    path('manage_bill_addProduct',views.manage_bill_addProduct,name= 'manage_bill_addProduct')
 ]

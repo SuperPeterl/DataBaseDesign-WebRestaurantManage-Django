@@ -351,5 +351,27 @@ def delete_bill(request):
 @login_required
 def manage_bill(request):
     id = request.POST.get('id')
+    #print(id)
+    context = {
+        'bill_id':id,
+        'orders':salesItems.objects.filter(sale_id = id),
+        'products':Products.objects.filter(status = 1)
+    }
+    return render(request,'posApp/manage_bill.html',context)
 
-    return render(request,'posApp/manage_bill.html',context={})
+@login_required
+def manage_bill_addProduct(request):
+    id = request.POST.get('id')
+    qty = request.POST.get('product_qty')
+    sale = Sales.objects.get(id = billhold.objects.get(id = id).sale_id.id)
+    product = Products.objects.get(id= request.POST.get('product_id'))
+    price = product.price
+    total = price*int(qty)
+    #print(prod,prodQty)
+    context = {
+        'bill_id':id,
+        'orders':salesItems.objects.filter(sale_id = id),
+        'products':Products.objects.filter(status = 1)
+    }
+    salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
+    return render(request,'posApp/manage_bill.html',context)
