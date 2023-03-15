@@ -84,7 +84,11 @@
             </fieldset>
             <div class="row">
                 <div class="col-md-12 text-end">
-                    <button class="btn btn-primary btn-sm rounded-0" type="button" id="check_out"><i class="mdi mdi-save"></i> Checkout</button>
+                    <form method="post" action="{% url 'manage_bill_checkout' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{bill_id}}">
+                        <button class="btn btn-primary btn-sm rounded-0" type="submit"><i class="mdi mdi-save"></i>Checkout</button>
+                    </form>
                 </div>
             </div>
     </div>

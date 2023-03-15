@@ -58,7 +58,6 @@ class Sales(models.Model):
     amount_change = models.FloatField(default=0)
     date_added = models.DateTimeField(default=timezone.now) 
     date_updated = models.DateTimeField(auto_now=True) 
-
     def __str__(self):
         return self.code
 
@@ -73,6 +72,7 @@ class Bills(models.Model):
     text = models.DateTimeField(default=timezone.now) 
     sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
     checkout = models.BooleanField(default=False)
+    itemcount = models.IntegerField(default=0)
     def __str__(self) -> str:
         return self.id 
     
