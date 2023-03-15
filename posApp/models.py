@@ -70,9 +70,9 @@ class salesItems(models.Model):
     total = models.FloatField(default=0)
 
 class Bills(models.Model):
-    #salesItems_id = models.ForeignKey(salesItems,on_delete=models.CASCADE,on_delete=models.CASCADE)
     text = models.DateTimeField(default=timezone.now) 
     sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
+    checkout = models.BooleanField(default=False)
     def __str__(self) -> str:
         return self.id 
     

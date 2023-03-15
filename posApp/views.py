@@ -318,7 +318,7 @@ def employees(request):
 
 @login_required
 def bill(request):
-    b = Bills.objects.all()
+    b = Bills.objects.filter(checkout = False)
     [x.save() for x in b]
     context = {
         'bills':b
@@ -399,7 +399,11 @@ def manage_bill_checkout(request):
     id = request.POST.get('id')
     print(id,'-----------------------------')
     bill = Bills.objects.get(id = id)
+    bill.checkout = True
+    bill.save()
     sales = Sales.objects.get(id = bill.sale_id.id)
+    sales.sub_total = salesItems.objects.filter(sale_id = sales.id).aggregate(Sum('total'))['total__sum']
+    sales.save()
     transaction = {}
     for field in Sales._meta.get_fields():
         if field.related_model is None:
@@ -412,4 +416,5 @@ def manage_bill_checkout(request):
         "salesItems" : ItemList
     }
     print(context)
+    print(sales.sub_total)
     return render(request, 'posApp/precheckout.html',context)
