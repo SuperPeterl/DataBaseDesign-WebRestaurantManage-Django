@@ -41,14 +41,14 @@
         </form>
             <fieldset>
                 <div class="d-flex w-180" id="POS-field">
-                    <div class="col-8 bg-gradient bg-light border h-100">
+                    <div class="col-12 bg-gradient bg-light border h-100">
                         <table class="table table-bordered">
                             <colgroup>
-                                <col width="5%">
-                                <col width="15%">
+                                <col width="10%">
                                 <col width="40%">
                                 <col width="20%">
                                 <col width="20%">
+                                <col width="10%">
                             </colgroup>
                             <thead>
                                 <tr class="bg-dark bg-gradient bg-opacity-50 text-light">
@@ -56,6 +56,7 @@
                                     <th class="py-1 px-2 text-center  text-light">Product</th>
                                     <th class="py-1 px-2 text-center  text-light">Price</th>
                                     <th class="py-1 px-2 text-center  text-light">Total</th>
+                                    <th class="py-1 px-2 text-center  text-light">Active</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,6 +85,7 @@
             </fieldset>
             <div class="row">
                 <div class="col-md-12 text-end">
+                    <a href="{% url 'bill' %}"><button class="btn btn-primary btn-sm rounded-0" type="button" id="back"><i class="mdi mdi-save"></i> Back</button></a>
                     <button class="btn btn-primary btn-sm rounded-0" type="button" id="check_out"><i class="mdi mdi-save"></i> Checkout</button>
                 </div>
             </div>
