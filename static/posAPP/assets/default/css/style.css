@@ -2,6 +2,7 @@ html,
 body {
     height: 100%;
     width: 100%;
+    
 }
 
 .loader-wrapper {
@@ -21,18 +22,22 @@ body {
     height: 55vh
 }
 
-.mdc-card.info-card.info-card--primary .card-inner .card-icon-wrapper {
+/* coding 01 */
+
+/* .mdc-card.info-card.info-card--primary .card-inner .card-icon-wrapper {
     background: var(--bs-primary) !important;
     box-shadow: 0 0 10px 5px rgb(13 110 253 / 28%);
-}
+}  */
 
+
+/* coding 01 */
 .bg-primary {
-    background: var(--bs-primary) !important;
-}
+    background: var(--bs-purple)  !important;
+} 
 
 .text-primary {
     color: var(--bs-primary) !important
-}
+} 
 
 .mdc-drawer {
     background: unset;

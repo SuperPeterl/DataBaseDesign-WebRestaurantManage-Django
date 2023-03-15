@@ -318,25 +318,17 @@ def employees(request):
 
 @login_required
 def bill(request):
-    bills = Bills.objects.filter(checkout = False)
+    b = Bills.objects.filter(checkout = False)
+    [x.save() for x in b]
     context = {
-        'bills':bills
+        'bills':b
     }
     return render(request, 'posApp/bill.html',context= context)
 
 @login_required
 def createbill(request):
     resp = {'status':'failed', 'msg':''}
-    pref = datetime.now().year + datetime.now().year
-    i = 1
-    while True:
-        code = '{:0>5}'.format(i)
-        i += int(1)
-        check = Sales.objects.filter(code = str(pref) + str(code)).all()
-        if len(check) <= 0:
-            break
-    code = str(pref) + str(code)
-    sale = Sales.objects.create(code = code)
+    sale = Sales.objects.create()
     sale.save()
     bill = Bills()   
     bill.sale_id = sale
@@ -380,21 +372,14 @@ def manage_bill_addProduct(request):
             'products':Products.objects.filter(status = 1)
         }
     if request.POST.get('product_id') != None:
-        qty = int(request.POST.get('product_qty'))
+        qty = request.POST.get('product_qty')
         sale = Sales.objects.get(id = Bills.objects.get(id = id).sale_id.id)
         product = Products.objects.get(id= request.POST.get('product_id'))
         price = product.price
         total = price*int(qty)
-        if len(salesItems.objects.filter(sale_id =  sale , product_id =product )) > 0:
-            item = salesItems.objects.get(sale_id = sale, product_id = product)
-            item.total += total
-            item.qty += qty
-            item.save()
-        else:
-            salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
+        salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
         return render(request,'posApp/manage_bill.html',context)
     return render(request,'posApp/manage_bill.html',context)
-
 
 @login_required
 def manage_bill_deleteProduct(request):
@@ -412,17 +397,26 @@ def manage_bill_deleteProduct(request):
 @login_required
 def manage_bill_checkout(request):
     id = request.POST.get('id')
+    print(id,'-----------------------------')
     bill = Bills.objects.get(id = id)
     bill.checkout = True
     bill.save()
     sales = Sales.objects.get(id = bill.sale_id.id)
+    transaction = {}
+    for field in Sales._meta.get_fields():
+        if field.related_model is None:
+            transaction[field.name] = getattr(sales,field.name)
+    if 'tax_amount' in transaction:
+        transaction['tax_amount'] = format(float(transaction['tax_amount']))
     new_sub_total = salesItems.objects.filter(sale_id = sales.id).aggregate(Sum('total'))['total__sum']
     if new_sub_total != None:
         sales.sub_total =  new_sub_total
         sales.save()
     ItemList = salesItems.objects.filter(sale_id = sales).all()
     context = {
-        "sale" : sales,
+        "transaction" : transaction,
         "salesItems" : ItemList
     }
+    print(context)
+    print(sales.sub_total)
     return render(request, 'posApp/precheckout.html',context)

@@ -292,7 +292,7 @@
                                         <td class="content-block">
                                             <table class="invoice">
                                                 <tbody><tr>
-                                                    <td><br>Invoice #12345<br>June 15 2023</td>
+                                                    <td>Anna Smith<br>Invoice #12345<br>June 15 2023</td>
                                                 </tr>
                                                 <tr>
                                                     <td>
@@ -326,9 +326,8 @@
                     </tbody></table>
                     <div class="footer">
                         <table width="100%">
-                            <tbody><tr>
-                                <td class="aligncenter content-block">Questions? Email <a href="mailto:">support@company.inc</a></td>
-                            </tr>
+                            <tbody>
+                                <a  href="{% url 'bill' %}"><button class="btn btn-primary btn-sm "  type="button" id="back"><i class="mdi mdi-save"></i> Back</button></a>
                         </tbody></table>
                     </div></div>
             </td>

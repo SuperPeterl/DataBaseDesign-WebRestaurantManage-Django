@@ -47,7 +47,7 @@
                             <form action="{% url 'manage_bill_checkout' %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="id" value="{{ bill.id }}">
-                                <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded " type="submit" title = "Checkout">
+                                <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="submit">
                                   <i class="material-icons mdc-button__icon">checkout</i>
                                 </button>
                             </form>
