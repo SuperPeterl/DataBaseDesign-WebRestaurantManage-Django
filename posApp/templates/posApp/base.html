@@ -6,9 +6,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% if page_title %}
-    <title>{{ page_title }} | Grocery POS</title>
+    <title>{{ page_title }}</title>
     {% else %}
-    <title>Grocery POS</title>
+    <title>Bill List</title>
     {% endif %}
     <link rel="stylesheet" href="{% static 'posApp/assets/bootstrap/css/bootstrap.min.css' %}">
 
@@ -26,13 +26,23 @@
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"> -->
     <link rel="stylesheet" href="{% static 'posApp/assets/default/css/style.css' %}">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{% static 'posApp/assets/material-admin/images/favicon.png' %}" />
+    {% comment %} <link rel="shortcut icon" href="{% static 'posApp/assets/material-admin/images/favicon.png' %}" /> {% endcomment %}
     <script src="{% static 'posApp/assets/default/js/jquery-3.6.0.min.js' %}">
     </script>
     <script src="{% static 'posApp/assets/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'posApp/assets/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'posApp/assets/bootstrap/js/popper.min.js' %}"></script>
-</head>
+
+
+    <style>
+
+        .modal-header,.modal-body,.modal-footer{
+            background-color: #A383FF;
+
+        }
+
+    </style>
+</head> 
 
 <body>
     <script src="{% static 'posApp/assets/material-admin/js/preloader.js' %}"></script>
@@ -75,7 +85,7 @@
                     </div>
                 </main>
                 <!-- partial:partials/_footer.html -->
-                <footer>
+                {% comment %} <footer>
                     <div class="mdc-layout-grid">
                         <div class="mdc-layout-grid__inner">
                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
@@ -86,7 +96,7 @@
                             </div>
                         </div>
                     </div>
-                </footer>
+                </footer> {% endcomment %}
                 <!-- partial -->
             </div>
         </div>
@@ -94,8 +104,8 @@
     {% block ScriptBlock %} {% endblock ScriptBlock %}
     <div class="modal fade" id="uni_modal" role='dialog'>
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-            <div class="modal-content rounded-0">
-                <div class="modal-header">
+            <div class="modal-content rounded-0">            
+                <div class="modal-header" >
                     <h5 class="modal-title"></h5>
                 </div>
                 <div class="modal-body">
