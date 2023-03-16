@@ -2,13 +2,14 @@ from pickle import FALSE
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
-from posApp.models import Category, Products, Sales, salesItems , Employees ,Bills
+from posApp.models import Category, Products, Sales, salesItems ,Bills,Material, ProductMaterial
 from django.db.models import Count, Sum
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 import json, sys
+from django.http import HttpResponseNotAllowed
 from datetime import date, datetime
 
 # Login
@@ -153,12 +154,14 @@ def manage_products(request):
         'categories' : categories
     }
     return render(request, 'posApp/manage_product.html',context)
+
 def test(request):
     categories = Category.objects.all()
     context = {
         'categories' : categories
     }
     return render(request, 'posApp/test.html',context)
+
 @login_required
 def save_product(request):
     data =  request.POST
@@ -197,6 +200,7 @@ def delete_product(request):
     except:
         resp['status'] = 'failed'
     return HttpResponse(json.dumps(resp), content_type="application/json")
+
 @login_required
 def pos(request):
     products = Products.objects.filter(status = 1)
@@ -338,6 +342,8 @@ def createbill(request):
 
 @login_required
 def delete_bill(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     data =  request.POST
     resp = {'status':''}
     bill = Bills.objects.get(id = data['id'])
@@ -354,6 +360,8 @@ def delete_bill(request):
 
 @login_required
 def manage_bill(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     id = request.POST.get('id')
     #print(id)
     context = {
@@ -365,6 +373,8 @@ def manage_bill(request):
 
 @login_required
 def manage_bill_addProduct(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     id = request.POST.get('id')
     context = {
             'bill_id':id,
@@ -377,12 +387,20 @@ def manage_bill_addProduct(request):
         product = Products.objects.get(id= request.POST.get('product_id'))
         price = product.price
         total = price*int(qty)
-        salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
+        if  len(salesItems.objects.filter(sale_id = sale,product_id = product)) > 0:
+            addprod = salesItems.objects.get(sale_id = sale,product_id = product)
+            addprod.qty += int(qty)
+            addprod.total += total
+            addprod.save()
+        else:
+            salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
         return render(request,'posApp/manage_bill.html',context)
     return render(request,'posApp/manage_bill.html',context)
 
 @login_required
 def manage_bill_deleteProduct(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     id = request.POST.get('id')
     item_id = request.POST.get('item_id')
     salesItems.objects.get(id = item_id).delete()
@@ -393,9 +411,10 @@ def manage_bill_deleteProduct(request):
         }
     return render(request,'posApp/manage_bill.html',context)
 
-
 @login_required
 def manage_bill_checkout(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     id = request.POST.get('id')
     print(id,'-----------------------------')
     bill = Bills.objects.get(id = id)
@@ -420,3 +439,113 @@ def manage_bill_checkout(request):
     print(context)
     print(sales.sub_total)
     return render(request, 'posApp/precheckout.html',context)
+
+
+@login_required
+def material(request):
+    material = Material.objects.all()
+    product = Products.objects.all()
+    context = {
+        'materials':material,
+        'products':product
+    }
+    return render(request,'posApp/materials.html',context)
+
+@login_required
+def manage_material(request):
+    id = request.GET.get('id')
+    if id != None:
+        context = {
+            'material':Material.objects.get(id = id)
+        }
+        return render(request,'posApp/manage_material.html',context)
+    return render(request,'posApp/manage_material.html')
+
+@login_required
+def save_material(request):
+    data = request.POST
+    print(data)
+    if data['id'] == '':
+        print(dict(data))
+        Material.objects.create(name = data['name'],description = data['description'],supplier = data['supplier'],cost = data['cost'],status = data['status'],stock = data['stock'])
+    else:
+        mat = Material.objects.get(id = data['id'])
+        mat.name = data['name']
+        mat.description = data['description']
+        mat.supplier = data['supplier']
+        mat.cost = data['cost']
+        mat.status = data['status']
+        mat.stock = data['stock']
+        mat.save()
+    material = Material.objects.all()
+    product = Products.objects.all()
+    context = {
+        'materials':material,
+        'products':product
+    }
+    return render(request,'posApp/materials.html',context)
+
+@login_required
+def delete_material(request):
+    data =  request.POST
+    resp = {'status':''}
+    try:
+        Material.objects.get(id = data['id']).delete()
+        resp['status'] = 'success'
+        messages.success(request, 'Product Successfully deleted.')
+    except:
+        resp['status'] = 'failed'
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+@login_required
+def manage_product_material(request):
+    id  = request.GET.get('id')
+    material = Material.objects.get(id = id)
+    PM = ProductMaterial.objects.filter(material = material)
+    product = Products.objects.all()
+    context = {
+        'id':id,
+        'products':product,
+        'PM':PM,
+        'material':material
+    }
+    return render(request,'posApp/manage_product_material.html',context)
+
+@login_required
+def link_product_material(request):
+    
+    id = request.POST.get('id')
+    material = Material.objects.get(id = id)
+    if request.POST.get('product_id') != None:
+        product = Products.objects.get(id = request.POST.get('product_id'))
+        pm = ProductMaterial.objects.create(product = product,material = material,quantity = request.POST.get('material_qty'))
+        pm.save()
+
+        # 
+
+    context = {
+        'id':id,
+        'products':Products.objects.all(),
+        'PM':ProductMaterial.objects.filter(material = material),
+        'material':Material.objects.get(id = id)
+    }
+    return render(request,'posApp/manage_product_material.html',context)
+
+def unlink_product_material(request):
+    id = request.POST.get('id')
+    pm = ProductMaterial.objects.filter(id = request.POST.get('pm_id')).delete()
+    material = Material.objects.get(id = id)
+    #print(ProductMaterial.objects.get(id = int(request.POST.get('pm_id'))))
+    #pm.save()
+
+    # 
+
+    context = {
+        'id':id,
+        'products':Products.objects.all(),
+        'PM':ProductMaterial.objects.filter(material = material),
+        'material':Material.objects.get(id = id)
+    }
+    return render(request,'posApp/manage_product_material.html',context)
+

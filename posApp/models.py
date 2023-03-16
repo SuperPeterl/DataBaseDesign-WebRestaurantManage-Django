@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 
 # Create your models here.
-
+'''''
 class Employees(models.Model):
     code = models.CharField(max_length=100,blank=True) 
     firstname = models.TextField() 
@@ -25,6 +25,7 @@ class Employees(models.Model):
 
     def __str__(self):
         return self.firstname + ' ' +self.middlename + ' '+self.lastname + ' '
+'''
 class Category(models.Model):
     name = models.TextField()
     description = models.TextField()
@@ -35,18 +36,38 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Material(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
+    supplier = models.CharField(max_length=50, blank=True, null=True)
+    cost = models.FloatField(default=0)
+    status = models.BooleanField(default=True)
+    stock = models.PositiveIntegerField(default=0)
+    def __str__(self):
+        return self.name
+    
 class Products(models.Model):
     code = models.CharField(max_length=100)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.TextField()
     description = models.TextField()
-    price = models.FloatField(default=0)
-    status = models.IntegerField(default=1) 
+    price = models.FloatField(default=0) 
     date_added = models.DateTimeField(default=timezone.now) 
-    date_updated = models.DateTimeField(auto_now=True) 
+    date_updated = models.DateTimeField(auto_now=True)
+    materials = models.ManyToManyField("Material", through='ProductMaterial', related_name='products')
+    status = models.BooleanField(default=True)
 
     def __str__(self):
         return self.code + " - " + self.name
+
+class ProductMaterial(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=0)
+    status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.product} - {self.material} ({self.quantity})"
 
 class Sales(models.Model):
     code = models.CharField(max_length=100)
@@ -82,3 +103,4 @@ class billItems(models.Model):
     price = models.FloatField(default=0)
     qty = models.FloatField(default=0)
     total = models.FloatField(default=0)
+

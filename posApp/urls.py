@@ -37,4 +37,11 @@ urlpatterns = [
     path('manage_bill_addProduct',views.manage_bill_addProduct,name= 'manage_bill_addProduct'),
     path('manage_bill_deleteProduct',views.manage_bill_deleteProduct,name= 'manage_bill_deleteProduct'),
     path('manage_bill_checkout',views.manage_bill_checkout,name= 'manage_bill_checkout'),
+    path('material', views.material, name="material"),
+    path('manage_material', views.manage_material, name="manage_material"),
+    path('save_material', views.save_material, name="save_material"),
+    path('delete_material', views.delete_material, name="delete_material"),
+    path('manage_product_material', views.manage_product_material, name="manage_product_material"),
+    path('link_product_material', views.link_product_material, name="link_product_material"),
+    path('unlink_product_material', views.unlink_product_material, name="unlink_product_material")
 ]
