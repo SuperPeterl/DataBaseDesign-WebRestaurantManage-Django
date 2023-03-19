@@ -47,17 +47,18 @@ def home(request):
     current_day = now.strftime("%d")
     categories = len(Category.objects.all())
     products = len(Products.objects.all())
-    transaction = len(Sales.objects.filter(
+    saled = Sales.objects.filter(
         date_added__year=current_year,
         date_added__month = current_month,
         date_added__day = current_day
-    ))
-    today_sales = Sales.objects.filter(
+    )
+    transaction = len([x for x in saled if Bills.objects.get(sale_id = x.id).checkout])
+    today_sales = [x.grand_total for x in Sales.objects.filter(
         date_added__year=current_year,
         date_added__month = current_month,
         date_added__day = current_day
-    ).all()
-    total_sales = sum(today_sales.values_list('grand_total',flat=True))
+    ) if Bills.objects.get(sale_id = x.id).checkout ]
+    total_sales = sum(today_sales)
     context = {
         'page_title':'Home',
         'categories' : categories,
@@ -381,20 +382,40 @@ def manage_bill_addProduct(request):
             'orders':salesItems.objects.filter(sale_id = id),
             'products':Products.objects.filter(status = 1)
         }
+    
     if request.POST.get('product_id') != None:
-        qty = request.POST.get('product_qty')
-        sale = Sales.objects.get(id = Bills.objects.get(id = id).sale_id.id)
-        product = Products.objects.get(id= request.POST.get('product_id'))
-        price = product.price
-        total = price*int(qty)
-        if  len(salesItems.objects.filter(sale_id = sale,product_id = product)) > 0:
-            addprod = salesItems.objects.get(sale_id = sale,product_id = product)
-            addprod.qty += int(qty)
-            addprod.total += total
-            addprod.save()
-        else:
-            salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
-        return render(request,'posApp/manage_bill.html',context)
+            product = Products.objects.get(id= request.POST.get('product_id'))
+            Matlist = ProductMaterial.objects.filter(product = product)
+            qty = int(request.POST.get('product_qty'))
+            sale = Sales.objects.get(id = Bills.objects.get(id = id).sale_id.id)
+            price = product.price
+            total = price*int(qty)
+            Matlist = ProductMaterial.objects.filter(product = product)
+            #check part
+            valid = False
+            for mat in Matlist:
+                print(mat.quantity*qty,mat.material.name,mat.material.stock)
+                if mat.quantity*qty - mat.material.stock > 0:
+                    valid = True
+                else:
+                    print("invalid!!!!!!!!")
+                    valid = False
+                    break
+            
+            if valid :
+                #save part
+                for mat in Matlist:
+                    mat.material.stock = mat.quantity*qty - mat.material.stock
+                    mat.material.stock.save()
+                if  len(salesItems.objects.filter(sale_id = sale,product_id = product)) > 0:
+                    addprod = salesItems.objects.get(sale_id = sale,product_id = product)
+                    addprod.qty += int(qty)
+                    addprod.total += total
+                    addprod.save()
+                else:
+                    salesItems(sale_id = sale, product_id = product, qty = qty, price = price, total = total).save()
+            return render(request,'posApp/manage_bill.html',context)
+        
     return render(request,'posApp/manage_bill.html',context)
 
 @login_required
