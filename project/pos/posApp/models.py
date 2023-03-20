@@ -2,30 +2,21 @@ from datetime import datetime
 from unicodedata import category
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth.models import User
 
-# Create your models here.
-'''''
-class Employees(models.Model):
-    code = models.CharField(max_length=100,blank=True) 
-    firstname = models.TextField() 
-    middlename = models.TextField(blank=True,null= True) 
-    lastname = models.TextField() 
-    gender = models.TextField(blank=True,null= True) 
-    dob = models.DateField(blank=True,null= True) 
-    contact = models.TextField() 
-    address = models.TextField() 
-    email = models.TextField() 
-#   department_id = models.ForeignKey(Department, on_delete=models.CASCADE) 
-#   position_id = models.ForeignKey(Position, on_delete=models.CASCADE) 
-    date_hired = models.DateField() 
-    salary = models.FloatField(default=0) 
-    status = models.IntegerField() 
-    date_added = models.DateTimeField(default=timezone.now) 
-    date_updated = models.DateTimeField(auto_now=True) 
+class Userinfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    gender = models.TextField(blank=True, null=True)
+    contact = models.TextField()
+    address = models.TextField()
+    date_hired = models.DateField()
+    salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    date_updated = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.firstname + ' ' +self.middlename + ' '+self.lastname + ' '
-'''
+
 class Category(models.Model):
     name = models.TextField()
     description = models.TextField()
@@ -90,17 +81,11 @@ class salesItems(models.Model):
     total = models.FloatField(default=0)
 
 class Bills(models.Model):
-    text = models.DateTimeField(default=timezone.now) 
+    date = models.DateTimeField(default=timezone.now) 
     sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
     checkout = models.BooleanField(default=False)
     itemcount = models.IntegerField(default=0)
+    user = models.ForeignKey(User,on_delete=models.CASCADE, default= None)
     def __str__(self) -> str:
         return self.id 
     
-class billItems(models.Model):
-    sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
-    product_id = models.ForeignKey(Products,on_delete=models.CASCADE)
-    price = models.FloatField(default=0)
-    qty = models.FloatField(default=0)
-    total = models.FloatField(default=0)
-

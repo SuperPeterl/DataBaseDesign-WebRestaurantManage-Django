@@ -52,13 +52,19 @@ def home(request):
         date_added__month = current_month,
         date_added__day = current_day
     )
-    transaction = len([x for x in saled if Bills.objects.get(sale_id = x.id).checkout])
-    today_sales = [x.grand_total for x in Sales.objects.filter(
-        date_added__year=current_year,
-        date_added__month = current_month,
-        date_added__day = current_day
-    ) if Bills.objects.get(sale_id = x.id).checkout ]
-    total_sales = sum(today_sales)
+    try :
+        transaction = len([x for x in saled if Bills.objects.get(sale_id = x.id).checkout])
+        today_sales = [x.grand_total for x in Sales.objects.filter(
+            date_added__year=current_year,
+            date_added__month = current_month,
+            date_added__day = current_day
+        ) if Bills.objects.get(sale_id = x.id).checkout ]
+        total_sales = sum(today_sales)
+    except :
+        print("none")
+        transaction = 0
+        today_sales = 0
+        total_sales = 0
     context = {
         'page_title':'Home',
         'categories' : categories,
@@ -324,7 +330,7 @@ def employees(request):
 
 @login_required
 def bill(request):
-    b = Bills.objects.filter(checkout = False)
+    b = Bills.objects.filter(checkout = False).order_by('-date')
     [x.save() for x in b]
     context = {
         'bills':b
@@ -334,10 +340,15 @@ def bill(request):
 @login_required
 def createbill(request):
     resp = {'status':'failed', 'msg':''}
-    sale = Sales.objects.create(code = 'S'+str(datetime.now().year)+str(Sales.objects.latest('id').id+1))
+    print(len(Sales.objects.all()))
+    i = 0
+    for x in Sales.objects.all():
+        i = i+1
+    sale = Sales.objects.create(code = 'S'+str(datetime.now().year)+str(i+1))
     sale.save()
     bill = Bills()   
     bill.sale_id = sale
+    bill.user = request.user
     bill.save() 
     resp['status'] = 'success'
     return HttpResponse(json.dumps(resp), content_type='application/json')
@@ -402,7 +413,7 @@ def manage_bill_addProduct(request):
                     print("invalid!!!!!!!!")
                     valid = False
                     break
-            if valid :
+            if valid or len(mat) == 0 :
                 #save part
                 for mat in Matlist:
                     mat.material.stock =  mat.material.stock - mat.quantity*qty

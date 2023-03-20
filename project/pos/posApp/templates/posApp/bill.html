@@ -26,7 +26,7 @@
                 <tbody>
                     {% for bill in bills %}
                     <tr>
-                        <td class="px-2 py-1 text-center">{{ bill.text }}</td>
+                        <td class="px-2 py-1 text-center">{{ bill.date|date:"d/m/Y H:i" }}</td>
                         </td>
                         <td class="px-2 py-1 text-center">
                             <form method="post" action="{% url 'manage_bill' %}">
