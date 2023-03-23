@@ -28,12 +28,15 @@ class Category(models.Model):
         return self.name
 
 class Material(models.Model):
+    date_added = models.DateTimeField(default=timezone.now) 
+    date_updated = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
     supplier = models.CharField(max_length=50, blank=True, null=True)
     cost = models.FloatField(default=0)
     status = models.BooleanField(default=True)
     stock = models.PositiveIntegerField(default=0)
+    added_stock = models.PositiveIntegerField(default=0)
     def __str__(self):
         return self.name
     

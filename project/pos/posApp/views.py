@@ -52,6 +52,19 @@ def home(request):
         date_added__month = current_month,
         date_added__day = current_day
     )
+    material =  Material.objects.filter(
+        date_added__year=current_year,
+        date_added__month = current_month,
+        date_added__day = current_day
+    )
+    total_cost = sum([x.cost*x.added_stock for x in material])
+
+    from django.db.models import Count
+
+    sales_items_count = salesItems.objects.values('product_id').annotate(total_sales=Count('product_id')).order_by('-total_sales')
+    sales_items_count = [(Products.objects.get(id = x['product_id']),x['total_sales']) for x in sales_items_count[0:3]]
+    
+
     try :
         transaction = len([x for x in saled if Bills.objects.get(sale_id = x.id).checkout])
         today_sales = [x.grand_total for x in Sales.objects.filter(
@@ -71,6 +84,9 @@ def home(request):
         'products' : products,
         'transaction' : transaction,
         'total_sales' : total_sales,
+        'total_cost' : total_cost ,
+        'benefit' : total_sales - total_cost,
+        'hots' : sales_items_count
     }
     return render(request, 'posApp/home.html',context)
 
@@ -380,7 +396,8 @@ def manage_bill(request):
     context = {
         'bill_id':id,
         'orders':salesItems.objects.filter(sale_id = id),
-        'products':Products.objects.filter(status = 1)
+        'products':Products.objects.filter(status = 1),
+        'bill':Bills.objects.get(id = id)
     }
     return render(request,'posApp/manage_bill.html',context)
 
@@ -506,7 +523,7 @@ def save_material(request):
     print(data)
     if data['id'] == '':
         print(dict(data))
-        Material.objects.create(name = data['name'],description = data['description'],supplier = data['supplier'],cost = data['cost'],status = data['status'],stock = data['stock'])
+        Material.objects.create(name = data['name'],description = data['description'],supplier = data['supplier'],cost = data['cost'],status = data['status'],stock = data['stock'],added_stock = data['stock'])
     else:
         mat = Material.objects.get(id = data['id'])
         mat.name = data['name']
@@ -515,6 +532,7 @@ def save_material(request):
         mat.cost = data['cost']
         mat.status = data['status']
         mat.stock = data['stock']
+        mat.added_stock = data['stock']
         mat.save()
     material = Material.objects.all()
     product = Products.objects.all()

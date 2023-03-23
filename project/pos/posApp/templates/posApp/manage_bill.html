@@ -5,7 +5,7 @@
             <form method="post" action="{% url 'editbill' %}">
                 {% csrf_token %}
                 <h4 class="card-title mb-0">รายการบิล</h4>
-                <input type="text" name="table"  id="table">
+                <input type="text" name="table" id="table" placeholder="{{bill.sale_id.tablename}}">
                 <input type="hidden" name="id" value="{{bill_id}}">
                 <button class="btn btn-light btn-sm bg-gradient border rounded-0 text-start" type="submit"><i class="mdi mdi-plus"></i> save</button>
             </form>

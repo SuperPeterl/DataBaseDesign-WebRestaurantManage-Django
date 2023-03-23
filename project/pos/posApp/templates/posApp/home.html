@@ -48,9 +48,23 @@
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
     <div class="mdc-card info-card info-card--warning">
         <div class="card-inner">
-            <h5 class="card-title">ยอดขาย</h5>
-            <h5 class="font-weight-light pb-2 mb-1 border-bottom">{{ total_sales|intcomma }}</h5>
-            <p class="tx-12 text-muted">ยอดขายวันนี้</p>
+            <h5 class="card-title">กำไร</h5>
+            <h5 class="font-weight-light pb-2 mb-1 border-bottom">{{ benefit|intcomma }}</h5>
+            <p class="tx-12 text-muted">ยอดขาย {{total_sales|intcomma}} , ต้นทุน {{total_cost|intcomma}}</p>
+            <div class="card-icon-wrapper">
+                <i class="mdi mdi-cash-multiple"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
+    <div class="mdc-card info-card info-card--warning">
+        <div class="card-inner">
+            <h5 class="card-title">สินค้าขายดี</h5>
+            {%for hot,c in hots%}
+            <h5 class="font-weight-light pb-2 mb-1 border-bottom">{{hot.name}} : {{c}}</h5>
+            {%endfor%}
+            <p class="tx-12 text-muted"></p>
             <div class="card-icon-wrapper">
                 <i class="mdi mdi-cash-multiple"></i>
             </div>

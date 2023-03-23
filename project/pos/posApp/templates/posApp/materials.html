@@ -16,8 +16,9 @@
                 <colgroup>
                     <col width="20%">
                     <col width="20%">
-                    <col width="25%">
-                    <col width="15%">
+                    <col width="20%">
+                    <col width="10%">
+                    <col width="10%">
                 </colgroup>
                 <thead>
                     <tr>
@@ -25,6 +26,7 @@
                         <th class="text-center py-1">ที่มา</th>
                         <th class="text-center py-1">ราคาต่อหน่วย</th>
                         <th class="text-center py-1">ปริมาณ</th>
+                        <th class="text-center py-1">ปริมาณคงเหลือ</th>
                         <th class="text-center py-1">สถานะ</th>
                         <th class="text-center py-1">จักการ</th>
                     </tr>
@@ -35,7 +37,9 @@
                         <td class="px-2 py-1 text-center">{{ material.name }}</td>
                         <td class="px-2 py-1 text-center">{{ material.supplier}}</td>
                         <td class="px-2 py-1 text-center">{{ material.cost }}</td>
+                        <td class="px-2 py-1 text-center">{{ material.added_stock }}</td>
                         <td class="px-2 py-1 text-center">{{ material.stock }}</td>
+                        
                         <td class="px-2 py-1 text-center">
                             {% if material.status == 1 %}
                             <span class="badge bg-primary rounded-pill px-3">Active</span> {% else %}
