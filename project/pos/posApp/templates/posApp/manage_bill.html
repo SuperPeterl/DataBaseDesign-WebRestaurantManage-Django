@@ -2,7 +2,13 @@
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card py-2">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="card-title mb-0">รายการบิล</h4>
+            <form method="post" action="{% url 'editbill' %}">
+                {% csrf_token %}
+                <h4 class="card-title mb-0">รายการบิล</h4>
+                <input type="text" name="table"  id="table">
+                <input type="hidden" name="id" value="{{bill_id}}">
+                <button class="btn btn-light btn-sm bg-gradient border rounded-0 text-start" type="submit"><i class="mdi mdi-plus"></i> save</button>
+            </form>
         </div>
     </div>
 </div>
@@ -33,6 +39,7 @@
                     <div class="col-lg-4 col-md-2 col-md-12">
                         <div class="form-group mb-3">
                             <input type="hidden" name="id" value="{{bill_id}}">
+
                             <button class="btn btn-light btn-sm bg-gradient border rounded-0 text-start" type="submit"><i class="mdi mdi-plus"></i> Add Item</button>
                         </div>
                     </div>

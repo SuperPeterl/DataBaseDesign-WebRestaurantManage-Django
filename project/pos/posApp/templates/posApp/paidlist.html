@@ -17,6 +17,7 @@
                 <thead>
                     <tr>
                         <th class="text-center py-1">รหัสบิล</th>
+                        <th class="text-center py-1">ชื่อโต๊ะ</th>
                         <th class="text-center py-1">ยอดซื้อรวม</th>
                         <th class="text-center py-1">ยอดซื้อสุทธิ</th>
                         <th class="text-center py-1">จำนวนนรายการ</th>
@@ -27,6 +28,7 @@
                     {% for sale,i in sales %}
                     <tr>
                         <td class="px-2 py-1 text-center">{{ sale.code }}</td>
+                        <td class="px-2 py-1 text-center">{{ sale.tablename }}</td>
                         <td class="px-2 py-1 text-center">{{ sale.sub_total }}</td>
                         <td class="px-2 py-1 text-center">{{ sale.grand_total }}</td>
                         <td class="px-2 py-1 text-center">{{ i }}</td>

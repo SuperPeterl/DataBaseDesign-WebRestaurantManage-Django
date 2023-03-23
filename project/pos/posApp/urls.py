@@ -46,4 +46,5 @@ urlpatterns = [
     path('unlink_product_material', views.unlink_product_material, name="unlink_product_material"),
     path('paidList', views.paidList, name="paidList"),
     path('review_bill_checkout',views.review_bill_checkout,name= 'review_bill_checkout'),
+    path('editbill',views.editbill,name= 'editbill')
 ]

@@ -553,16 +553,12 @@ def manage_product_material(request):
 
 @login_required
 def link_product_material(request):
-    
     id = request.POST.get('id')
     material = Material.objects.get(id = id)
     if request.POST.get('product_id') != None:
         product = Products.objects.get(id = request.POST.get('product_id'))
         pm = ProductMaterial.objects.create(product = product,material = material,quantity = request.POST.get('material_qty'))
         pm.save()
-
-        # 
-
     context = {
         'id':id,
         'products':Products.objects.all(),
@@ -628,3 +624,19 @@ def review_bill_checkout(request):
     print(context)
     print(sales.sub_total)
     return render(request, 'posApp/reviewcheckout.html',context)
+
+
+@login_required 
+def editbill(request):
+    id = request.POST['id']
+    table = request.POST['table']
+    print(table)
+    bill = Bills.objects.get(id =  id)
+    bill.sale_id.tablename = table
+    bill.sale_id.save()
+    context = {
+        'bill_id':id,
+        'orders':salesItems.objects.filter(sale_id = id),
+        'products':Products.objects.filter(status = 1)
+    }
+    return render(request,'posApp/manage_bill.html',context)
